@@ -1,0 +1,33 @@
+name: immo
+version: "1.0.0"
+config-version: 2
+profile: immo
+
+model-paths: ["models"]
+macro-paths: ["macros"]
+test-paths: ["tests"]
+target-path: "target"
+clean-targets: ["target", "dbt_packages"]
+
+# Valeurs par défaut ; la commande `immo transform` les surcharge avec --vars
+vars:
+  source: "sample"
+  raw_glob: "../data/raw/sample/*/*.csv.gz"
+  departements: ["75", "77", "78", "91", "92", "93", "94", "95"]
+  surface_min: 9        # surface minimale d'un logement décent (m²)
+  surface_max: 1000
+  prix_m2_min: 500      # bornes de plausibilité du prix au m² en Île-de-France
+  prix_m2_max: 30000
+
+models:
+  immo:
+    +materialized: table
+    +persist_docs:
+      relation: true
+      columns: true
+    bronze:
+      +schema: bronze
+    silver:
+      +schema: silver
+    gold:
+      +schema: gold

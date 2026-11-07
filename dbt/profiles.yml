@@ -1,0 +1,7 @@
+immo:
+  target: dev
+  outputs:
+    dev:
+      type: duckdb
+      path: "{{ env_var('IMMO_DATA_DIR', '../data') }}/warehouse.duckdb"
+      threads: 4

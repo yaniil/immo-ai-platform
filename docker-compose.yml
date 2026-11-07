@@ -1,0 +1,51 @@
+# docker compose up --build            → API (8000), interface (8501), MLflow (5000)
+# docker compose --profile airflow up  → ajoute Airflow (8080) pour orchestrer le pipeline
+x-immo: &immo
+  build: .
+  image: immo-ai-platform
+  env_file:
+    - path: .env
+      required: false
+  volumes:
+    - ./data:/app/data
+    - ./models:/app/models
+
+services:
+  api:
+    <<: *immo
+    ports: ["8000:8000"]
+
+  app:
+    <<: *immo
+    command: ["streamlit", "run", "app/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+    environment:
+      API_URL: http://api:8000
+    healthcheck:
+      disable: true
+    depends_on:
+      api:
+        condition: service_healthy
+    ports: ["8501:8501"]
+
+  mlflow:
+    <<: *immo
+    command: ["mlflow", "ui", "--backend-store-uri", "sqlite:////app/data/mlflow.db", "--host", "0.0.0.0", "--port", "5000"]
+    healthcheck:
+      disable: true
+    ports: ["5000:5000"]
+
+  airflow:
+    profiles: ["airflow"]
+    build:
+      context: .
+      dockerfile: airflow/Dockerfile
+    command: standalone
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      AIRFLOW__CORE__SIMPLE_AUTH_MANAGER_ALL_ADMINS: "True"  # pas de mot de passe : usage local uniquement
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+    ports: ["8080:8080"]

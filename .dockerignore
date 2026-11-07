@@ -1,0 +1,12 @@
+data/
+models/
+mlruns/
+.venv/
+venv/
+.env
+.git/
+**/__pycache__/
+dbt/target/
+dbt/logs/
+.pytest_cache/
+.ruff_cache/

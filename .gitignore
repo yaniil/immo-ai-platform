@@ -1,0 +1,29 @@
+# Données et artefacts (régénérés par `immo pipeline`)
+data/
+models/
+mlruns/
+mlartifacts/
+
+# dbt
+dbt/target/
+dbt/logs/
+dbt/dbt_packages/
+logs/
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+.ruff_cache/
+
+# Secrets
+.env
+
+# Éditeurs / OS
+.vscode/
+.idea/
+.DS_Store
+dbt/.user.yml
